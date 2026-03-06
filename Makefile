@@ -1,6 +1,6 @@
-.PHONY: demo up down logs backup restore check
+.PHONY: demo up down logs seed migrate backup restore check test clean
 
-demo: up check backup
+demo: up seed check migrate backup restore
 	@echo "Demo complete. Try: make logs"
 
 up:
@@ -15,8 +15,20 @@ logs:
 check:
 	bash scripts/check_replication.sh
 
+seed:
+	bash scripts/seed_demo_data.sh
+
+migrate:
+	bash scripts/migrate_safe_add_column.sh
+
 backup:
 	bash scripts/backup.sh
 
 restore:
 	bash scripts/restore.sh
+
+test:
+	TEST_MODE=demo python3 tests/run_tests.py
+
+clean:
+	rm -rf artifacts
